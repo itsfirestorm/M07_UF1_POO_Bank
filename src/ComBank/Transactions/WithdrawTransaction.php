@@ -17,9 +17,6 @@ class WithdrawTransaction extends BaseTransaction implements BankTransactionInte
 {
     public function applyTransaction(BankAccountInterface $account): float
     {
-        if ($this->getAmount() <= 0) {
-            throw new ZeroAmountException("You specified an amount of zero.");
-        }
         $newBalance = $account->getBalance() - $this->getAmount();
         if (!$account->getOverdraft()->isGrantOverdraftFunds($newBalance)) {
             throw new InvalidOverdraftFundsException('Your withdraw has reached the max overdraft funds.');
