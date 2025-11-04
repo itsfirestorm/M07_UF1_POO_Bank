@@ -5,6 +5,7 @@ use ComBank\Bank\BankAccount;
 use ComBank\OverdraftStrategy\SilverOverdraft;
 use ComBank\Exceptions\BankAccountException;
 use ComBank\Exceptions\FailedTransactionException;
+use ComBank\OverdraftStrategy\NoOverdraft;
 use ComBank\Transactions\DepositTransaction;
 use ComBank\Transactions\WithdrawTransaction;
 
@@ -29,6 +30,7 @@ class BankAccountTest extends TestCase
     public function testWithdrawTransaction(): void
     {
         $bankAccount = new BankAccount(200.0);
+        $bankAccount->applyOverdraft(new NoOverdraft);
         $bankAccount->transaction(new WithdrawTransaction(150.0));
         $this->assertEqualsWithDelta(50.0, $bankAccount->getBalance(), 0.001);
     }
@@ -66,10 +68,10 @@ class BankAccountTest extends TestCase
     // Test a failed transaction due to overdraft refusal
     public function testFailedTransactionWithOverdraft(): void
     {
-        $this->expectException(FailedTransactionException::class);        
+        $this->expectException(FailedTransactionException::class);
 
         $bankAccount = new BankAccount(100.0);
-        $bankAccount->applyOverdraft(new SilverOverdraft());        
+        $bankAccount->applyOverdraft(new SilverOverdraft());
         $bankAccount->transaction(new WithdrawTransaction(201.0));// should fail
     }
 

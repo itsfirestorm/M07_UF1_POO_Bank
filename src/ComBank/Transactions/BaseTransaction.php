@@ -8,15 +8,27 @@ namespace ComBank\Transactions;
  * Time: 1:24 PM
  */
 
+use ComBank\Support\Traits\AmountValidationTrait;
+use ComBank\Exceptions\BaseExceptions;
 use ComBank\Exceptions\InvalidArgsException;
 use ComBank\Exceptions\ZeroAmountException;
-use ComBank\Support\Traits\AmountValidationTrait;
 
 abstract class BaseTransaction
 {
+    use AmountValidationTrait;
     protected $amount;
     public function __construct($amount)
     {
+        try {
+            $this->validateAmount($amount);
+        } catch (ZeroAmountException $e) {
+            throw new ZeroAmountException($e->getMessage());
+        }
+        try {
+            $this->validateAmount($amount);
+        } catch (InvalidArgsException $e) {
+            throw new InvalidArgsException($e->getMessage());
+        }
         $this->amount = $amount;
     }
 }

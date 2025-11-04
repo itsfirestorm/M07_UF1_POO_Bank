@@ -32,10 +32,10 @@ class BankAccount implements BankAccountInterface
         $this->status = BankAccountInterface::STATUS_OPEN;
     }
 
-    public function transaction(BankTransactionInterface $bankTransaction): FailedTransactionException|null
+    public function transaction(BankTransactionInterface $bankTransaction)
     {
         if (!$this->isOpen()) {
-            return new FailedTransactionException("Your account should be open.");
+            throw new BankAccountException("Your account should be open.");
         }
         try {
             $this->setBalance($bankTransaction->applyTransaction($this));
@@ -54,21 +54,21 @@ class BankAccount implements BankAccountInterface
         }
     }
 
-    public function reopenAccount(): void
+    public function reopenAccount()
     {
         if ($this->status === BankAccountInterface::STATUS_CLOSED) {
             $this->status = BankAccountInterface::STATUS_OPEN;
         } else {
-            echo "Your account is already open!";
+            throw new BankAccountException("Your account is already open!");
         }
     }
 
-    public function closeAccount(): void
+    public function closeAccount()
     {
         if ($this->status === BankAccountInterface::STATUS_OPEN) {
             $this->status = BankAccountInterface::STATUS_CLOSED;
         } else {
-            echo "Your account is already closed!";
+            throw new BankAccountException("Your account is already closed!");
         }
     }
 

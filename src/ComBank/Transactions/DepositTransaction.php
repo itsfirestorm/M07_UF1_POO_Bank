@@ -9,12 +9,12 @@ namespace ComBank\Transactions;
  */
 
 use ComBank\Bank\Contracts\BankAccountInterface;
-use ComBank\Exceptions\InvalidOverdraftFundsException;
+use ComBank\Exceptions\ZeroAmountException;
 use ComBank\Transactions\Contracts\BankTransactionInterface;
 
 class DepositTransaction extends BaseTransaction implements BankTransactionInterface
 {
-    public function applyTransaction(BankAccountInterface $account)
+    public function applyTransaction(BankAccountInterface $account): float
     {
         $newBalance = $account->getBalance() + $this->getAmount();
         return $newBalance;

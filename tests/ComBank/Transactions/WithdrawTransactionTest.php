@@ -8,6 +8,7 @@ use ComBank\Bank\Contracts\BankAccountInterface;
 use ComBank\Transactions\WithdrawTransaction;
 use ComBank\Exceptions\InvalidOverdraftFundsException;
 use ComBank\Exceptions\ZeroAmountException;
+use ComBank\OverdraftStrategy\NoOverdraft;
 
 /**
  * Created by VS Code.
@@ -23,13 +24,14 @@ class WithdrawTransactionTest extends TestCase
      * @test
      * */
     public function testWithdrawTransactionMoreThanBalance()
-    {     
-
+    {
         $bankAccount = new BankAccount(150.0);
+        $bankAccount->applyOverdraft(new NoOverdraft());
+
         $amount = 50;
         $trans = new WithdrawTransaction($amount);
         $newBalance = $trans->applyTransaction($bankAccount);
-        $this->assertEquals(100,$newBalance);
+        $this->assertEquals(100, $newBalance);
     }
     /**
      * @test
@@ -40,11 +42,12 @@ class WithdrawTransactionTest extends TestCase
         $this->expectException(InvalidOverdraftFundsException::class);
 
         $bankAccount = new BankAccount(100.0);
+        $bankAccount->applyOverdraft(new NoOverdraft);
 
         $amount = 150;
         $trans = new WithdrawTransaction($amount);
         $newBalance = $trans->applyTransaction($bankAccount);
-        $this->assertEquals(100,$newBalance);
+        $this->assertEquals(100, $newBalance);
     }
     /**
      * @test
@@ -57,7 +60,7 @@ class WithdrawTransactionTest extends TestCase
         $amount = 150;
         $trans = new WithdrawTransaction($amount);
         $newBalance = $trans->applyTransaction($bankAccount);
-        $this->assertEquals(-50,$newBalance);
+        $this->assertEquals(-50, $newBalance);
     }
     /**
      * @test
@@ -69,21 +72,22 @@ class WithdrawTransactionTest extends TestCase
         $this->expectException(ZeroAmountException::class);
         new WithdrawTransaction($amount);
     }
-    
+
     /**
      * @test
      * */
     public function testTransactionInfo()
     {
         $trans = new WithdrawTransaction(22.0);
-        $this->assertEquals('WITHDRAW_TRANSACTION',$trans->getTransactionInfo());
+        $this->assertEquals('WITHDRAW_TRANSACTION', $trans->getTransactionInfo());
     }
     /**
      * @test
      * */
-    public function testGetAmount(){
+    public function testGetAmount()
+    {
         $trans = new WithdrawTransaction(100.25);
-        $this->assertEquals(100.25,$trans->getAmount());
+        $this->assertEquals(100.25, $trans->getAmount());
     }
     /**
      * @return array;
@@ -95,5 +99,5 @@ class WithdrawTransactionTest extends TestCase
             [-0.01],  // Small negative value
             [0]       // Zero amount
         ];
-    }   
+    }
 }
