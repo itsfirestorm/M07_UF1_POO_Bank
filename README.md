@@ -14,11 +14,11 @@ cd M07_UF1_POO_Bank
 ### Linux / macOS
 
 ```bash
-./vendor/bin/phpunit ./tests/*
+./vendor/bin/phpunit ./tests/* --testdox
 ```
 
 ### Powershell / CMD
 
 ```powershell
-.\vendor\bin\phpunit .\tests\*
+.\vendor\bin\phpunit .\tests\* --testdox
 ```
